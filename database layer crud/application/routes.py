@@ -22,3 +22,10 @@ def update(name):
     first_game.name = name
     db.session.commit()
     return first_game.name
+
+@app.route('/delete/<int:game_id>')
+def delete (game_id):
+    game_delete = Games.query.get(game_id)
+    db.session.delete (game_delete)
+    db.session.commit()
+    return "Deleted game: " + str(game_id) 
