@@ -17,11 +17,23 @@ class UserCheck:
         if field.data.lower() in (word.lower() for word in self.banned):
             raise ValidationError(self.message)
 
+class SpecialChars:
+    def __init__(self, chars, message):
+        self.chars = chars
+        self.message = message
+    def __call__(self, form, field):
+        for letter in field.data:
+            for char in self.chars:
+                if letter == char:
+                    raise ValidationError(self.message)
+
+
 class myForm(FlaskForm):
     username = StringField('Username', validators=[
         DataRequired(),
         UserCheck(message="custom rejection message",banned = ['root','admin','sys']),
-        Length(min=2,max=15)
+        Length(min=2,max=15),
+        SpecialChars(chars= ['!','?','$'], message= 'No special chars')
         ])
     submit = SubmitField('Sign up')
 
